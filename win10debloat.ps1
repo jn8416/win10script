@@ -216,7 +216,7 @@ $tweaks = @(
             #"HideTaskbarSearch",
             "ShowTaskbarSearchBox",
         #TaskView                           # Task View
-            #"HideTaskView",
+            "HideTaskView",
             #"ShowTaskView",
         #TaskbarPeopleIcon                  # Taskbar People Icon
             "HideTaskbarPeopleIcon",
@@ -327,9 +327,9 @@ $tweaks = @(
         #NordVPN
             "InstallNordVPN",
         #Nextcloud
-            "InstallNextcloud",
+            #"InstallNextcloud",
         #Syncthing
-            "InstallSyncthing",
+            #"InstallSyncthing",
 
     #End of Script
         "WaitForKey"
