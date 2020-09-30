@@ -37,7 +37,7 @@
 $tweaks = @(
     #Startup
     "RequireAdmin",
-    "InstallRecProgs",
+    "RunOO",
     "DebloatMain",
 
     #Privacy Tweaks
@@ -83,8 +83,8 @@ $tweaks = @(
         #ErrorReporting                     # Error Reporting to Microsoft
             "DisableErrorReporting",
             #"EnableErrorReporting",
-        #SetP2PUpdate                       # Download Updates Only From Microsoft
-            "SetP2PUpdateLocal",
+        #SetP2PUpdate                       # Download Updates Only From Microsoft - Not needed I think
+            #"SetP2PUpdateLocal",
             #"SetP2PUpdateInternet",
         #DiagTrack                          # Error Reporting to Microsoft
             "DisableDiagTrack",
@@ -112,8 +112,8 @@ $tweaks = @(
         #NetDevicesAutoInst                 # Auto Install Network Devices
             "DisableNetDevicesAutoInst",
             #"EnableNetDevicesAutoInst",
-        #CtrldFolderAccess                  # Unknown
-            "DisableCtrldFolderAccess",
+        #CtrldFolderAccess                  # Unknown - Broken?
+            #"DisableCtrldFolderAccess",
             #"EnableCtrldFolderAccess",
         #Firewall                           # Windows Firewall
             #"DisableFirewall",
@@ -141,8 +141,8 @@ $tweaks = @(
         #UpdateRestart                      # Auto Restart for Updates
             "DisableUpdateRestart",
             #"EnableUpdateRestart",
-        #HomeGroups                         # Home Groups
-            "DisableHomeGroups",
+        #HomeGroups                         # Home Groups - Broken?
+            #"DisableHomeGroups",
             #"EnableHomeGroups",
         #SharedExperiences                  # Shared Experiences
             "DisableSharedExperiences",
@@ -181,7 +181,7 @@ $tweaks = @(
             #"DisableSleepButton",
             "EnableSleepButton",
         #SleepTimeout                       # Auto Sleep
-            "DisableSleepTimeout",
+            #"DisableSleepTimeout",
             #"EnableSleepTimeout",
         #FastStartup                        # Fast Startup
             "DisableFastStartup",
@@ -238,6 +238,9 @@ $tweaks = @(
             #"EnableNumlock",
 
     #Explorer UI Tweaks
+        #Checkbox                           # Checkbox Visibility
+            "ShowCheckbox",
+            #"HideCheckbox",
         #KnownExtensions                    # Extensions Visibility
             #"HideKnownExtensions",
             "ShowKnownExtensions",
@@ -301,31 +304,35 @@ $tweaks = @(
     #Other
         #UnpinStartMenuTiles                # Unpin Defaults 
             "UnpinStartMenuTiles",
-        #Stop-EdgePDF                       # Disable Edge Taking PDF
-            "Stop-EdgePDF",
-        #DarkMode                           # Dark Mode
-            "DisableDarkMode",
+        #Stop-EdgePDF                       # Disable Edge Taking PDF - broken?
+            #"Stop-EdgePDF",
+        #DarkMode                           # Dark Mode - broken?
+            #"DisableDarkMode",
             #"EnableDarkMode",
+        # Microsoft Scanner Program
+            #"InstallScanner",
 
-    #Install Programs
+    #Install Programs (Chocolately)
+        #Chocolatey (Reqired for all)
+            #"InstallChocolete",
         #Firefox
-            "InstallFirefox",
+            #"InstallFirefox",
         #Notepad++
-            "InstallNPP",
+            #"InstallNPP",
         #Adobe Acrobat Reader
-            "InstallAcrobat",
+            #"InstallAcrobat",
         #Chocolatey GUI
-            "InstallChocoGUI",
+            #"InstallChocoGUI",
         #VLC
-            "InstallVLC",
+            #"InstallVLC",
         #WinRAR
-            "InstallWinRAR",
+            #"InstallWinRAR",
         #Paint.NET
-            "InstallPaintNET",
+            #"InstallPaintNET",
         #Steam
-            "InstallSteam",
+            #"InstallSteam",
         #NordVPN
-            "InstallNordVPN",
+            #"InstallNordVPN",
         #Nextcloud
             #"InstallNextcloud",
         #Syncthing
@@ -356,10 +363,7 @@ Function RequireAdmin {
 }
 
 # Install Required Programs
-Function InstallRecProgs {
-    Write-Output "Installing Chocolatey"
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-    choco install chocolatey-core.extension -y
+Function RunOO {
     Write-Output "Running O&O Shutup with Recommended Settings"
     Import-Module BitsTransfer
     Start-BitsTransfer -Source "https://raw.githubusercontent.com/jn8416/win10script/master/ooshutup10.cfg" -Destination ooshutup10.cfg
@@ -394,6 +398,14 @@ Function DebloatMain {
         "Microsoft.WindowsFeedbackHub"              # Feedback Hub
         "Microsoft.WindowsMaps"                     # Windows Maps
         "Microsoft.WindowsSoundRecorder"            # Windows Voice Recorder
+        "Microsoft.BingWeather"                     # Bing Weather
+        "Microsoft.MicrosoftOfficeHub"              # Office Hub (Office 365)
+        "Microsoft.MicrosoftStickyNotes"            # Sticky Notes
+        "Microsoft.MixedReality.Portal"             # Mixed Reality Portal
+        "Microsoft.MSPaint"                         # Paint 3D
+        "Microsoft.Office.OneNote"                  # Office OneNote
+        "Microsoft.ScreenSketch"                    # Screen Sktech
+        "Microsoft.YourPhone"                       # Your Phone
 
 
         #Sponsored Windows 10 AppX Apps
@@ -1531,6 +1543,18 @@ Function DisableNumlock {
 # Explorer UI Tweaks
 ##########
 
+# Show Checkbox
+Function ShowCheckbox {
+    Write-Output "Showing known file extensions..."
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "AutoCheckSelect" -Type DWord -Value 1
+}
+
+# Hide Checkbox
+Function HideCheckbox {
+    Write-Output "Showing known file extensions..."
+    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "AutoCheckSelect" -Type DWord -Value 0
+}
+
 # Show known file extensions
 Function ShowKnownExtensions {
     Write-Output "Showing known file extensions..."
@@ -1876,7 +1900,7 @@ Function DisableDarkMode {
     Remove-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme
 }
 
-#Stops edge from taking over as the default .PDF viewer
+# Stop Edge PDF Takeover (Stops edge from taking over as the default .PDF viewer)
 Function Stop-EdgePDF {
 
     Write-Output "Stopping Edge from taking over as the default .PDF viewer"
@@ -1909,11 +1933,27 @@ Function Stop-EdgePDF {
     }
 }
 
+# Install Microsoft Scanner
+Function InstallScanner {
+    Write-Output "Installing Scanner"
+    Start-BitsTransfer -Source "http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/07991083-08a6-4564-8aa5-76b242236669?P1=1601507611&P2=402&P3=2&P4=RrM7tsODt%2fR5zkmW1EVF3kp3kdTiW5XBTJ%2bY%2bZ7iH%2bMVyBr5PV9JnLZTQSSq9nKbqXoWvvzn4riZTd1ri7v1pQ%3d%3d" -Destination ScannerRec.Appx
+    Start-BitsTransfer -Source "http://tlu.dl.delivery.mp.microsoft.com/filestreamingservice/files/2e35b4ff-3376-491b-9eeb-9d7d45b9b5cf?P1=1601507389&P2=402&P3=2&P4=pR3rmd88RBqDkoza7Fb2KyhStzwh%2f6ppO7TFSmQ5XIgxgXu8hxcigPJ3NKNT79xhvNDZSNtxGCKBLF1Ujsc0Cg%3d%3d" -Destination Scanner.AppxBundle
+    Add-AppxPackage -Path "./ScannerRec.Appx"
+    Add-AppxPackage -Path "./Scanner.AppxBundle"
+}
+
 
 
 ##########
 # Install Programs
 ##########
+
+# Chocolatey
+Function InstallChocolete {
+    Write-Output "Installing Chocolatey"
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    choco install chocolatey-core.extension -y
+}
 
 # Firefox
 Function InstallFirefox {
